@@ -4,10 +4,31 @@ import InputText from "@/components/InputText/InputText";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
 
 const Register = () => {
-  const router = useRouter();
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: yup.object({
+      name: yup.string().required().trim(),
+      email: yup.string().required().trim().email(),
+      password: yup.string().required().trim().min(6),
+      confirmPassword: yup
+        .string()
+        .required()
+        .trim()
+        .oneOf([yup.ref("password"), null], "password must match"),
+    }),
+    onSubmit: async (values) => {
+      console.log(values);
+    },
+  });
   return (
     <section className="flex h-screen">
       <div className="grow justify-center flex">
@@ -19,15 +40,54 @@ const Register = () => {
               src="/images/logo-color.svg"
             />
           </div>
-          <form>
+          <form onSubmit={formik.handleSubmit}>
             <h1 className="text-2xl font-medium mb-5 text-center mt-3">
               Register
             </h1>
             <div className="flex flex-col gap-3">
-              <InputText size="large" placeholder="Email" />
-              <InputText size="large" placeholder="Name" />
-              <InputPassword size="large" placeholder="Password" />
-              <InputPassword size="large" placeholder="Confirm Password" />
+              <InputText
+                autoComplete="off"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="name"
+                size="large"
+                error={formik.errors.name && formik.touched.name}
+                errorMessage={formik.touched.name && formik.errors.name}
+                placeholder="Name"
+              />
+              <InputText
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="email"
+                size="large"
+                error={formik.errors.email && formik.touched.email}
+                errorMessage={formik.touched.email && formik.errors.email}
+                placeholder="Email"
+              />
+              <InputPassword
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="password"
+                size="large"
+                error={formik.errors.password && formik.touched.password}
+                errorMessage={formik.touched.password && formik.errors.password}
+                placeholder="Password"
+              />
+              <InputPassword
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="confirmPassword"
+                size="large"
+                error={
+                  formik.errors.confirmPassword &&
+                  formik.touched.confirmPassword
+                }
+                errorMessage={
+                  formik.touched.confirmPassword &&
+                  formik.errors.confirmPassword
+                }
+                placeholder="Confirm Password"
+              />
               <Button
                 type="submit"
                 className="bg-primary hover:bg-primary-focus text-primary-content w-28"

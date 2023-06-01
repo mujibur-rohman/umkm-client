@@ -17,7 +17,8 @@ const InputText = ({
   const classnamesInput = classNames(
     "border-[1px] py-1 px-2 transition-all duration-300 rounded w-full focus:shadow focus:border-blue-500 outline-none placeholder:font-light pr-7 box-border hover:border-blue-500 focus:ring-1",
     {
-      "!border-red-500 placeholder:text-red-500 text-red-500": error,
+      "!border-red-500 placeholder:text-red-500 text-red-500 focus:!border-red-500 hover:!border-red-500 focus:ring-red-500":
+        error,
       "text-xs h-6": size === "small",
       "text-md h-8": size === "medium",
       "text-lg h-10": size === "large",

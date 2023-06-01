@@ -7,7 +7,7 @@
 }
 
 .is-error {
-  @apply !border-red-500 placeholder:text-red-500 text-red-500;
+  @apply !border-red-500 placeholder:text-red-500 text-red-500 focus:!border-red-500 hover:!border-red-500 focus:ring-red-500;
 }
 
 .disabled {
