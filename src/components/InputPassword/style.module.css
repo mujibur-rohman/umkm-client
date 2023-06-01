@@ -1,0 +1,47 @@
+.wrapper-input-password {
+  @apply flex box-border flex-col w-full;
+}
+
+.input-password {
+  @apply border-[1px] py-1 px-2 transition-all duration-300 rounded w-full focus:shadow focus:border-blue-500 outline-none placeholder:font-light pr-7 box-border hover:border-blue-500 focus:ring-1;
+}
+
+.is-error {
+  @apply !border-red-500 placeholder:text-red-500 text-red-500;
+}
+
+.disabled {
+  @apply bg-gray-200 cursor-not-allowed border-none;
+}
+
+.eye-icon {
+  @apply h-full absolute right-[0.4rem] top-0 flex items-center;
+}
+
+.input-password.primary + div {
+  @apply text-primary;
+}
+
+.input-password.secondary + div {
+  @apply text-secondary;
+}
+
+.input-password.accent + div {
+  @apply text-accent;
+}
+
+.input-password.warning + div {
+  @apply text-warning;
+}
+
+.input-password.neutral + div {
+  @apply text-neutral;
+}
+
+.input-password.success + div {
+  @apply text-success;
+}
+
+.input-password.error + div {
+  @apply text-error;
+}
