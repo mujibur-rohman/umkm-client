@@ -4,6 +4,7 @@ import InputText from "@/components/InputText/InputText";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { toast } from "react-toastify";
 
 const Auth = () => {
   return (
@@ -46,6 +47,9 @@ const Auth = () => {
               <InputText size="large" placeholder="Email" />
               <InputPassword size="large" placeholder="Password" />
               <Button
+                onClick={(e) => {
+                  toast.success("Test");
+                }}
                 type="submit"
                 className="bg-primary hover:bg-primary-focus text-primary-content w-20"
               >

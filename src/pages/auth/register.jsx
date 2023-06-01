@@ -3,9 +3,11 @@ import InputPassword from "@/components/InputPassword/InputPassword";
 import InputText from "@/components/InputText/InputText";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 const Register = () => {
+  const router = useRouter();
   return (
     <section className="flex h-screen">
       <div className="grow justify-center flex">
