@@ -3,9 +3,10 @@ import InputPassword from "@/components/InputPassword/InputPassword";
 import InputText from "@/components/InputText/InputText";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { Circles } from "react-loader-spinner";
+import baseColor from "@/utils/baseColor";
 
 const Register = () => {
   const formik = useFormik({
@@ -90,9 +91,23 @@ const Register = () => {
               />
               <Button
                 type="submit"
-                className="bg-primary hover:bg-primary-focus text-primary-content w-28"
+                disabled={formik.isSubmitting}
+                className="bg-primary flex justify-center hover:bg-primary-focus text-primary-content w-28"
               >
-                Sign Up
+                {formik.isSubmitting ? (
+                  <Circles
+                    height="20"
+                    width="20"
+                    radius={20}
+                    color={baseColor["primary-content"]}
+                    ariaLabel="puff-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                  />
+                ) : (
+                  "Sign Up"
+                )}
               </Button>
               <p className="text-neutral">
                 Sudah punya akun?? silahkan{" "}
