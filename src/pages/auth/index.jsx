@@ -1,12 +1,47 @@
+"use client";
+
 import Button from "@/components/Button/Button";
 import InputPassword from "@/components/InputPassword/InputPassword";
 import InputText from "@/components/InputText/InputText";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { Circles } from "react-loader-spinner";
+import baseColor from "@/utils/baseColor";
+import AuthService from "@/network/features/auth.api";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import { signIn } from "next-auth/react";
 
 const Auth = () => {
+  const router = useRouter();
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: yup.object({
+      email: yup.string().required().trim().email(),
+      password: yup.string().required().trim().min(6),
+    }),
+    onSubmit: async (values, formProps) => {
+      try {
+        const res = await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          redirect: true,
+          callbackUrl: "/",
+        });
+        // await AuthService.login(values);
+        // formProps.resetForm();
+        // router.push("/");
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    },
+  });
   return (
     <section className="flex h-screen">
       <div className="w-[40vw] bg-primary hidden lg:flex justify-center items-center">
@@ -39,21 +74,47 @@ const Auth = () => {
               src="/images/logo-color.svg"
             />
           </div>
-          <form>
+          <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
             <h1 className="text-2xl font-medium mb-5 text-center mt-3">
               Login
             </h1>
             <div className="flex flex-col gap-3">
-              <InputText size="large" placeholder="Email" />
-              <InputPassword size="large" placeholder="Password" />
+              <InputText
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="email"
+                size="large"
+                error={formik.errors.email && formik.touched.email}
+                errorMessage={formik.touched.email && formik.errors.email}
+                placeholder="Email"
+              />
+              <InputPassword
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                name="password"
+                size="large"
+                error={formik.errors.password && formik.touched.password}
+                errorMessage={formik.touched.password && formik.errors.password}
+                placeholder="Password"
+              />
               <Button
-                onClick={(e) => {
-                  toast.success("Test");
-                }}
-                type="submit"
-                className="bg-primary hover:bg-primary-focus text-primary-content w-20"
+                disabled={formik.isSubmitting}
+                className="bg-primary flex justify-center hover:bg-primary-focus text-primary-content w-28"
               >
-                Log In
+                {formik.isSubmitting ? (
+                  <Circles
+                    height="20"
+                    width="20"
+                    radius={20}
+                    color={baseColor["primary-content"]}
+                    ariaLabel="puff-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                    visible={true}
+                  />
+                ) : (
+                  "Log In"
+                )}
               </Button>
               <p className="text-neutral">
                 Belum punya akun? silahkan daftar di{" "}
