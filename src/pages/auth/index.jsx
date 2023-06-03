@@ -30,13 +30,17 @@ const Auth = () => {
         const res = await signIn("credentials", {
           email: values.email,
           password: values.password,
-          redirect: true,
-          callbackUrl: "/",
+          redirect: false,
         });
-        // await AuthService.login(values);
-        // formProps.resetForm();
-        // router.push("/");
+        if (res.ok) {
+          formProps.resetForm();
+          router.push("/");
+        }
+        if (res.error) {
+          toast.error(res.error);
+        }
       } catch (error) {
+        console.log("first");
         console.log(error);
         toast.error(error.message);
       }

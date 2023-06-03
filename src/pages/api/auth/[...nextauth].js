@@ -1,6 +1,7 @@
 import AuthService from "@/network/features/auth.api";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { toast } from "react-toastify";
 
 export const authOptions = {
   providers: [
@@ -10,23 +11,20 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // console.log(credentials.email);
-        // console.log(credentials.password);
+        // ALUR => AuthService => NextAuth => LoginClient
 
         try {
           const user = await AuthService.login({
             email: credentials?.email,
             password: credentials?.password,
           });
-          console.log(user);
           if (user) {
             return user;
           } else {
             return null;
           }
         } catch (error) {
-          console.log("HAHAHA");
-          throw new Error(error);
+          throw new Error(error.message);
         }
       },
     }),
@@ -37,7 +35,6 @@ export const authOptions = {
   },
   pages: {
     signIn: "/auth",
-    // error: "/auth",
   },
   callbacks: {
     async jwt({ token, user }) {
