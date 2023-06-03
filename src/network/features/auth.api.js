@@ -4,14 +4,27 @@ const authEndPoint = "/auth";
 
 const Auth = {
   login: async (payload) => {
-    const response = await axiosConfig.post(`${authEndPoint}`, { ...payload });
-    return response.data;
+    try {
+      const response = await axiosConfig.post(`${authEndPoint}`, {
+        ...payload,
+      });
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
   },
   register: async (payload) => {
-    const response = await axiosConfig.post(`${authEndPoint}/register`, {
-      ...payload,
-    });
-    return response.data;
+    try {
+      const response = await axiosConfig.post(`${authEndPoint}/register`, {
+        ...payload,
+      });
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
   },
 };
 

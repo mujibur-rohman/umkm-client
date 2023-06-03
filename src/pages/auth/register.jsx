@@ -7,8 +7,12 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { Circles } from "react-loader-spinner";
 import baseColor from "@/utils/baseColor";
+import Auth from "@/network/features/auth.api";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const Register = () => {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -26,8 +30,16 @@ const Register = () => {
         .trim()
         .oneOf([yup.ref("password"), null], "password must match"),
     }),
-    onSubmit: async (values) => {
-      console.log(values);
+    onSubmit: async (values, formProps) => {
+      try {
+        const { confirmPassword, ...valuesForm } = values;
+        await Auth.register(valuesForm);
+        formProps.resetForm();
+        toast.success("Berhasil Mendaftar");
+        router.push("/auth");
+      } catch (error) {
+        toast.error(error.message);
+      }
     },
   });
   return (
@@ -41,7 +53,7 @@ const Register = () => {
               src="/images/logo-color.svg"
             />
           </div>
-          <form onSubmit={formik.handleSubmit}>
+          <form onSubmit={formik.handleSubmit} onReset={formik.handleReset}>
             <h1 className="text-2xl font-medium mb-5 text-center mt-3">
               Register
             </h1>
