@@ -40,8 +40,6 @@ const Auth = () => {
           toast.error(res.error);
         }
       } catch (error) {
-        console.log("first");
-        console.log(error);
         toast.error(error.message);
       }
     },

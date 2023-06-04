@@ -12,7 +12,6 @@ export const authOptions = {
       },
       async authorize(credentials) {
         // ALUR => AuthService => NextAuth => LoginClient
-
         try {
           const user = await AuthService.login({
             email: credentials?.email,
@@ -31,7 +30,7 @@ export const authOptions = {
   ],
   session: { strategy: "jwt" },
   jwt: {
-    maxAge: 60 * 60 * 2,
+    maxAge: 60 * 60 * 1,
   },
   pages: {
     signIn: "/auth",
