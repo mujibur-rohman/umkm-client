@@ -67,8 +67,8 @@ const Auth = () => {
           </div>
         </div>
       </div>
-      <div className="grow justify-center flex">
-        <div className="mt-[20rem] w-9/12 md:w-8/12 lg:w-1/2 flex flex-col gap-3">
+      <div className="grow justify-center items-center flex">
+        <div className="w-9/12 md:w-8/12 lg:w-1/2 flex flex-col gap-3">
           <div className="flex justify-center">
             <img
               alt="logo"
