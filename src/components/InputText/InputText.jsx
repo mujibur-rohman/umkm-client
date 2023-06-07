@@ -29,7 +29,7 @@ const InputText = ({
       "border-success": color === "success",
       "border-warning": color === "warning",
       "border-error": color === "error",
-      "bg-gray-200 cursor-not-allowed border-none": disabled,
+      "bg-gray-200 cursor-not-allowed border-none text-gray-400": disabled,
     }
   );
 

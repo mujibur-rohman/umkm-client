@@ -30,6 +30,22 @@ const Auth = {
       throw new Error(error.message);
     }
   },
+  updateProfilePic: async (uuid, profilePicture) => {
+    console.log(profilePicture);
+    try {
+      const response = await axiosConfig.put(
+        `${authEndPoint}/profile-picture/${uuid}`,
+        profilePicture,
+        { "Content-Type": `multipart/form-data` }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
+  },
 };
 
 export default Auth;

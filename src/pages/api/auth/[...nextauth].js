@@ -29,13 +29,21 @@ export const authOptions = {
   ],
   session: { strategy: "jwt" },
   jwt: {
-    maxAge: 60 * 60 * 1,
+    maxAge: 60 * 60 * 24,
+  },
+  session: {
+    jwt: true,
+    maxAge: 60 * 60 * 24,
   },
   pages: {
     signIn: "/auth",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      console.log(trigger);
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
       return { ...token, ...user };
     },
     async session({ session, token, user }) {
