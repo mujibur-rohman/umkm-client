@@ -4,7 +4,6 @@ const authEndPoint = "/auth";
 
 const Auth = {
   login: async (payload) => {
-    console.log(payload);
     try {
       const response = await axiosConfig.post(`${authEndPoint}/login`, {
         ...payload,
@@ -31,7 +30,6 @@ const Auth = {
     }
   },
   updateProfilePic: async (uuid, profilePicture) => {
-    console.log(profilePicture);
     try {
       const response = await axiosConfig.put(
         `${authEndPoint}/profile-picture/${uuid}`,

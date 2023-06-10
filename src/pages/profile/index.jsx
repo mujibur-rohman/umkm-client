@@ -6,6 +6,7 @@ import InputPassword from "@/components/InputPassword/InputPassword";
 import { getSession, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import AuthService from "@/network/features/auth.api";
+import acceptedImages, { sizeImage } from "@/utils/acceptedImages";
 
 function Profile() {
   const [disableName, setDisableName] = useState(true);
@@ -17,6 +18,12 @@ function Profile() {
     try {
       // set blob
       const img = e.target.files[0];
+      if (!acceptedImages.includes(img.type)) {
+        throw new Error("Gambar yang diupload tidak valid");
+      }
+      if (img.size > sizeImage) {
+        throw new Error("Minimal ukuran gambar 2MB");
+      }
       const blob = URL.createObjectURL(img);
       setSrcPic(blob);
       const formData = new FormData();
@@ -35,7 +42,7 @@ function Profile() {
       });
       toast.success("Foto Profil Berhasil Diubah");
     } catch (error) {
-      console.log(error);
+      toast.error(error.message);
     }
   };
   return (
