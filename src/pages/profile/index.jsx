@@ -14,6 +14,7 @@ function Profile() {
   const { data: session, update } = useSession();
   console.log(session.user);
 
+  // handler image
   const changeProfilePic = async (e) => {
     try {
       // set blob
@@ -45,8 +46,17 @@ function Profile() {
       toast.error(error.message);
     }
   };
+
+  // handler name
+  const changeHandlerName = async (e) => {
+    try {
+      console.log(e.target.value);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   return (
-    <section className="">
+    <section>
       <header className="bg-gradient-to-r grow from-blue-500 via-purple-500 to-pink-500 flex justify-center">
         <Avatar
           className="translate-y-1/2"
@@ -65,7 +75,12 @@ function Profile() {
               <div className="w-full">
                 <label>Nama</label>
                 <div className="flex gap-2">
-                  <InputText placeholder="Nama" disabled={disableName} />
+                  <InputText
+                    placeholder="Nama"
+                    value={session.user.name}
+                    disabled={disableName}
+                    onChange={changeHandlerName}
+                  />
                   {disableName ? (
                     <button
                       onClick={() => setDisableName(false)}

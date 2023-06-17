@@ -44,6 +44,20 @@ const Auth = {
       throw new Error(error.message);
     }
   },
+  updateName: async (uuid, name) => {
+    try {
+      const response = await axiosConfig.put(
+        `${authEndPoint}/change-name/${uuid}`,
+        { name }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
+  },
 };
 
 export default Auth;
