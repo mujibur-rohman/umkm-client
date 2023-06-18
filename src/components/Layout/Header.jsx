@@ -12,7 +12,7 @@ import React from "react";
 const Header = () => {
   const session = useSession();
   const router = useRouter();
-  console.log(session);
+  // console.log(session);
   return (
     <header className="sticky items-center px-5 justify-between bg-white border-b-[1px] top-0 h-12 flex">
       <span className="font-medium text-primary cursor-pointer">
@@ -31,7 +31,10 @@ const Header = () => {
       {/* Jika login */}
       <div className="flex gap-3">
         {!session?.data?.user.store && (
-          <button className="bg-primary text-sm text-white px-3 py-1 rounded hover:bg-primary-focus transition-all">
+          <button
+            onClick={() => router.push("/store/add")}
+            className="bg-primary text-sm text-white px-3 py-1 rounded hover:bg-primary-focus transition-all"
+          >
             Buka Toko
           </button>
         )}
