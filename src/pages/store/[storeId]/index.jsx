@@ -10,11 +10,14 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import acceptedImages, { sizeImage } from "@/utils/acceptedImages";
+import StoreAPI from "@/network/features/store.api";
+import { useRouter } from "next/router";
 
-const EditStore = () => {
+const EditStore = ({ store }) => {
   const [geo, setGeo] = useState({});
   const [map, setMap] = useState(/** @type google.maps.Map */ (null));
   const [srcPic, setSrcPic] = useState("");
+  const router = useRouter();
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_API_GOOGLE_API_KEY,
@@ -26,16 +29,23 @@ const EditStore = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (store.profilePicture) {
+      setSrcPic(store.profilePicture);
+    }
+  }, []);
+
   // Form handle
   const formik = useFormik({
     initialValues: {
-      profilePicture: "",
-      name: "",
-      address: "",
-      latitude: "",
-      longitude: "",
-      noTlp: "",
+      profilePicture: store.profilePicture,
+      name: store.name,
+      address: store.address,
+      latitude: store.latitude,
+      longitude: store.longitude,
+      noTlp: store.noTlp,
     },
+    enableReinitialize: true,
     validationSchema: yup.object({
       name: yup.string().required("nama toko harus diisi").trim(),
       address: yup.string().required("alamat harus diisi").trim(),
@@ -49,6 +59,21 @@ const EditStore = () => {
     }),
     onSubmit: async (values, formProps) => {
       console.log(values);
+      try {
+        const formData = new FormData();
+        for (const key in values) {
+          formData.append(key, values[key]);
+        }
+        await StoreAPI.update({
+          storeId: store.id,
+          formData,
+        });
+
+        router.push("/store");
+        toast.success("Toko Berhasil Diubah");
+      } catch (error) {
+        toast.error(error.message);
+      }
     },
   });
 
@@ -96,6 +121,7 @@ const EditStore = () => {
         <div className="flex gap-3">
           <InputText
             name="name"
+            value={formik.values.name}
             placeholder="Nama Toko"
             error={formik.errors.name && formik.touched.name}
             errorMessage={formik.touched.name && formik.errors.name}
@@ -104,6 +130,7 @@ const EditStore = () => {
           />
           <InputText
             name="noTlp"
+            value={formik.values.noTlp}
             placeholder="Nomor Telepon"
             error={formik.errors.noTlp && formik.touched.noTlp}
             errorMessage={formik.touched.noTlp && formik.errors.noTlp}
@@ -114,6 +141,7 @@ const EditStore = () => {
         <Textarea
           placeholder="Alamat Toko"
           name="address"
+          value={formik.values.address}
           error={formik.errors.address && formik.touched.address}
           errorMessage={formik.touched.address && formik.errors.address}
           onBlur={formik.handleBlur}
@@ -132,7 +160,7 @@ const EditStore = () => {
                 formik.setFieldValue("longitude", e.latLng.lng());
               }}
               center={geo}
-              zoom={15}
+              zoom={12}
               mapContainerStyle={{ width: "100%", height: "100%" }}
               options={{
                 zoomControl: false,
@@ -141,14 +169,14 @@ const EditStore = () => {
               }}
               onLoad={(map) => {
                 setMap(map);
-                formik.setFieldValue("latitude", geo.lat);
-                formik.setFieldValue("longitude", geo.lng);
+                formik.setFieldValue("latitude", store.latitude * 1);
+                formik.setFieldValue("longitude", store.longitude * 1);
               }}
             >
               <MarkerF
                 position={{
-                  lat: formik.values.latitude || 0,
-                  lng: formik.values.longitude || 0,
+                  lat: formik.values.latitude * 1 || 0,
+                  lng: formik.values.longitude * 1 || 0,
                 }}
               />
             </GoogleMap>
@@ -167,13 +195,28 @@ const EditStore = () => {
         </div>
         <button
           type="submit"
+          disabled={formik.isSubmitting}
           className="bg-primary hover:bg-primary-focus transition-all py-2 text-white rounded"
         >
-          Buat Toko
+          {formik.isSubmitting ? "Loading" : "Ubah Toko"}
         </button>
       </form>
     </section>
   );
 };
+
+export async function getServerSideProps(context) {
+  try {
+    const { storeId } = context.query;
+    const store = await StoreAPI.getOne(storeId);
+    return {
+      props: { store },
+    };
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
+}
 
 export default EditStore;

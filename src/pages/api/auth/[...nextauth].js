@@ -40,7 +40,6 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      console.log(trigger);
       if (trigger === "update") {
         return { ...token, ...session.user };
       }

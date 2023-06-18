@@ -30,7 +30,6 @@ const AddStore = () => {
       setGeo({ lat: position.coords.latitude, lng: position.coords.longitude });
     });
   }, []);
-  console.log(session);
 
   // Form handle
   const formik = useFormik({
@@ -63,7 +62,6 @@ const AddStore = () => {
           uuidUser: session.user.uuid,
           formData,
         });
-        console.log(newStore);
         await update({
           ...session,
           user: {
@@ -74,7 +72,6 @@ const AddStore = () => {
         router.push("/store");
         toast.success("Toko Berhasil Dibuat");
       } catch (error) {
-        console.log(error);
         toast.error(error.message);
       }
     },

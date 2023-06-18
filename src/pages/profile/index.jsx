@@ -12,7 +12,6 @@ function Profile() {
   const [disableName, setDisableName] = useState(true);
   const [srcPic, setSrcPic] = useState("");
   const { data: session, update } = useSession();
-  console.log(session.user);
 
   // handler image
   const changeProfilePic = async (e) => {
