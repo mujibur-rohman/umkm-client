@@ -6,6 +6,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { Button, Menu, Text } from "@mantine/core";
 import { getSession, signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 
@@ -15,22 +16,22 @@ const Header = () => {
   // console.log(session);
   return (
     <header className="sticky items-center px-5 justify-between bg-white border-b-[1px] top-0 h-12 flex">
-      <span className="font-medium text-primary cursor-pointer">
+      <Link href="/" className="font-medium text-primary cursor-pointer">
         UMKM Niaga
-      </span>
+      </Link>
 
-      {/* Jika belum login */}
-      {session.status === "unauthenticated" && (
-        <button
-          onClick={() => router.push("/auth")}
-          className="bg-primary text-sm text-white px-3 py-1 rounded hover:bg-primary-focus transition-all"
-        >
-          Login
-        </button>
-      )}
       {/* Jika login */}
       <div className="flex gap-3">
-        {!session?.data?.user.store && (
+        {/* Jika belum login */}
+        {session.status === "unauthenticated" && (
+          <button
+            onClick={() => router.push("/auth")}
+            className="bg-primary text-sm text-white px-3 py-1 rounded hover:bg-primary-focus transition-all"
+          >
+            Login
+          </button>
+        )}
+        {!session?.data?.user.store && session?.data?.user.email && (
           <button
             onClick={() => router.push("/store/add")}
             className="bg-primary text-sm text-white px-3 py-1 rounded hover:bg-primary-focus transition-all"
