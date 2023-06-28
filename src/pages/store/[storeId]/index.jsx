@@ -58,7 +58,6 @@ const EditStore = ({ store }) => {
         .trim(),
     }),
     onSubmit: async (values, formProps) => {
-      console.log(values);
       try {
         const formData = new FormData();
         for (const key in values) {

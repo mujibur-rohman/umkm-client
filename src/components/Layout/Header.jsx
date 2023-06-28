@@ -15,7 +15,7 @@ const Header = () => {
   const router = useRouter();
   // console.log(session);
   return (
-    <header className="sticky items-center px-5 justify-between bg-white border-b-[1px] top-0 h-12 flex">
+    <header className="sticky items-center px-5 justify-between bg-white z-10 border-b-[1px] top-0 h-12 flex">
       <Link href="/" className="font-medium text-primary cursor-pointer">
         UMKM Niaga
       </Link>
