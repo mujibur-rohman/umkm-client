@@ -7,6 +7,7 @@ import Link from "next/link";
 import React from "react";
 
 const Store = ({ store }) => {
+  console.log(store.Products);
   return (
     <section>
       <div className="border-b-[1px] px-10 py-3 flex flex-col items-center gap-2">
@@ -32,32 +33,39 @@ const Store = ({ store }) => {
             Tambah Produk
           </Link>
         </div>
-        <div className="grid grid-cols-3 gap-3 p-5">
-          <div className="border-[1px] rounded overflow-hidden">
-            <div className="cursor-pointer">
-              <img
-                className="w-full h-52 object-cover object-center"
-                src="https://cdn.pixabay.com/photo/2016/06/07/17/15/yogurt-1442034_1280.jpg"
-                alt="product"
-              />
-            </div>
-            <div className="p-2">
-              <p className="text-lg font-medium cursor-pointer">Product Name</p>
-              <div className="flex justify-between items-center">
-                <p className="text-2xl mt-2 font-bold text-primary">
-                  Rp. 20.000
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-5">
+          {store.Products.map((prod) => (
+            <div key={prod.id} className="border-[1px] rounded overflow-hidden">
+              <div className="cursor-pointer">
+                <img
+                  className="w-full h-52 object-cover object-center"
+                  src={prod.picture}
+                  alt="product"
+                />
+              </div>
+              <div className="p-2">
+                <p className="text-lg font-medium cursor-pointer">
+                  {prod.name}
                 </p>
-                <div className="flex gap-2">
-                  <div className="bg-warning p-2 rounded cursor-pointer">
-                    <PencilIcon className="w-4 text-white" />
-                  </div>
-                  <div className="bg-error p-2 rounded cursor-pointer">
-                    <TrashIcon className="w-4 text-white" />
+                <div className="flex justify-between items-center">
+                  <p className="text-2xl mt-2 font-bold text-primary">
+                    Rp. {prod.price}
+                  </p>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`product/${prod.id}/edit`}
+                      className="bg-warning p-2 rounded cursor-pointer"
+                    >
+                      <PencilIcon className="w-4 text-white" />
+                    </Link>
+                    <div className="bg-error p-2 rounded cursor-pointer">
+                      <TrashIcon className="w-4 text-white" />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
