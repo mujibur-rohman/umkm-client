@@ -39,6 +39,19 @@ const ProductAPI = {
       throw new Error(error.message);
     }
   },
+  delete: async (productId) => {
+    try {
+      const response = await axiosConfig.delete(
+        `${productEndPoint}/${productId}`
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
+  },
 };
 
 export default ProductAPI;

@@ -39,7 +39,6 @@ function EditProduct({ product }) {
         .trim(),
     }),
     onSubmit: async (values) => {
-      console.log(values);
       try {
         const formData = new FormData();
         for (const key in values) {

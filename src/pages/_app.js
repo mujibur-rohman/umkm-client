@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "@/components/Layout/Header";
 import { MantineProvider } from "@mantine/core";
 import { useRouter } from "next/router";
+import { ModalsProvider } from "@mantine/modals";
 
 export default function App({
   Component,
@@ -21,9 +22,11 @@ export default function App({
           colorScheme: "light",
         }}
       >
-        <ToastContainer hideProgressBar />
-        {router.pathname !== "/auth" && <Header />}
-        <Component {...pageProps} />
+        <ModalsProvider>
+          <ToastContainer hideProgressBar />
+          {router.pathname !== "/auth" && <Header />}
+          <Component {...pageProps} />
+        </ModalsProvider>
       </MantineProvider>
     </SessionProvider>
   );

@@ -14,6 +14,7 @@
     "@heroicons/react": "^2.0.18",
     "@mantine/core": "^6.0.13",
     "@mantine/hooks": "^6.0.13",
+    "@mantine/modals": "^6.0.15",
     "@mantine/next": "^6.0.13",
     "@react-google-maps/api": "^2.18.1",
     "auth": "^0.0.9",

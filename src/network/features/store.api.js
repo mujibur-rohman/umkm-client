@@ -1,6 +1,6 @@
 import axiosConfig from "../axiosConfig";
 
-const storeEndPoint = "/store";
+export const storeEndPoint = "/store";
 
 const StoreAPI = {
   add: async ({ formData, uuidUser }) => {
