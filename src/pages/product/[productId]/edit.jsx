@@ -4,14 +4,12 @@ import Textarea from "@/components/Textarea/Textarea";
 import ProductAPI from "@/network/features/product.api";
 import acceptedImages, { sizeImage } from "@/utils/acceptedImages";
 import { useFormik } from "formik";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as yup from "yup";
 
 function EditProduct({ product }) {
-  const { data: session } = useSession();
   const [srcPic, setSrcPic] = useState("");
   const router = useRouter();
 
