@@ -10,7 +10,6 @@ import * as yup from "yup";
 
 function Checkout({ product }) {
   const router = useRouter();
-  console.log(product);
   const { data: session } = useSession();
   const formik = useFormik({
     initialValues: {
@@ -32,6 +31,7 @@ function Checkout({ product }) {
           userId: session.user.id,
         });
         toast.success("Checkout Berhasil");
+        router.push("/success-checkout/" + product.storeId);
       } catch (error) {
         toast.error(error);
       }
