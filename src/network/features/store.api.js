@@ -28,6 +28,17 @@ const StoreAPI = {
       throw new Error(error.message);
     }
   },
+  getNearly: async (url) => {
+    try {
+      const response = await axiosConfig.get(url);
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
+  },
   update: async ({ formData, storeId }) => {
     try {
       const response = await axiosConfig.put(

@@ -67,7 +67,7 @@ const Store = () => {
           <p className="font-medium text-xl">{store.name}</p>
           <span>{store.address}</span>
           <Link
-            href={`/store/${store.id}`}
+            href={`/store/${store.id}/edit`}
             className="bg-success px-2 py-1 rounded cursor-pointer text-white mt-3"
           >
             Edit Toko

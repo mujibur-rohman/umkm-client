@@ -58,7 +58,7 @@ const Header = () => {
               </Menu.Item>
               {session.data.user.store && (
                 <Menu.Item
-                  onClick={() => router.push("/store")}
+                  onClick={() => router.push("/store/")}
                   icon={<BuildingStorefrontIcon className="w-4" />}
                 >
                   Toko Saya

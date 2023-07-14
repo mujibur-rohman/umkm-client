@@ -1,215 +1,103 @@
 import Avatar from "@/components/Avatar/avatar";
-import InputText from "@/components/InputText/InputText";
-import Textarea from "@/components/Textarea/Textarea";
-import { MapPinIcon } from "@heroicons/react/24/solid";
-import { GoogleMap, MarkerF, useJsApiLoader } from "@react-google-maps/api";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import acceptedImages, { sizeImage } from "@/utils/acceptedImages";
+import ProductAPI from "@/network/features/product.api";
 import StoreAPI from "@/network/features/store.api";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { modals } from "@mantine/modals";
+import { getSession, useSession } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import React from "react";
+import { toast } from "react-toastify";
+import useSWR from "swr";
 
-const EditStore = ({ store }) => {
-  const [geo, setGeo] = useState({});
-  const [map, setMap] = useState(/** @type google.maps.Map */ (null));
-  const [srcPic, setSrcPic] = useState("");
+const StoreDetail = () => {
+  const session = useSession();
   const router = useRouter();
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_API_GOOGLE_API_KEY,
-  });
+  const {
+    data: store,
+    isLoading,
+    mutate,
+  } = useSWR(`${router.query.storeId}`, (url) => StoreAPI.getOne(url));
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(function (position) {
-      setGeo({ lat: position.coords.latitude, lng: position.coords.longitude });
-    });
-  }, []);
-
-  useEffect(() => {
-    if (store.profilePicture) {
-      setSrcPic(store.profilePicture);
-    }
-  }, []);
-
-  // Form handle
-  const formik = useFormik({
-    initialValues: {
-      profilePicture: store.profilePicture,
-      name: store.name,
-      address: store.address,
-      latitude: store.latitude,
-      longitude: store.longitude,
-      noTlp: store.noTlp,
-    },
-    enableReinitialize: true,
-    validationSchema: yup.object({
-      name: yup.string().required("nama toko harus diisi").trim(),
-      address: yup.string().required("alamat harus diisi").trim(),
-      latitude: yup.string().required(),
-      longitude: yup.string().required(),
-      noTlp: yup
-        .string()
-        .matches(/^-?\d+\.?\d*$/, "telepon bukan bertipe angka")
-        .required("telepon harus diisi")
-        .trim(),
-    }),
-    onSubmit: async (values, formProps) => {
-      try {
-        const formData = new FormData();
-        for (const key in values) {
-          formData.append(key, values[key]);
-        }
-        await StoreAPI.update({
-          storeId: store.id,
-          formData,
-        });
-
-        router.push("/store");
-        toast.success("Toko Berhasil Diubah");
-      } catch (error) {
-        toast.error(error.message);
-      }
-    },
-  });
-
-  // handler image
-  const changeProfilePic = async (e) => {
-    try {
-      // set blob
-      const img = e.target.files[0];
-      if (!acceptedImages.includes(img.type)) {
-        throw new Error("Gambar yang diupload tidak valid");
-      }
-      if (img.size > sizeImage) {
-        throw new Error("Minimal ukuran gambar 2MB");
-      }
-      const blob = URL.createObjectURL(img);
-      setSrcPic(blob);
-      formik.setFieldValue("profilePicture", img);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  if (!isLoaded) return <p className="text-center">Loading...</p>;
-
-  return (
-    <section className="p-10">
-      <h2 className="text-center font-medium text-2xl">Ubah Toko</h2>
-      <form
-        onSubmit={formik.handleSubmit}
-        onReset={formik.handleReset}
-        className="mt-6 flex flex-col gap-3"
-      >
-        <div className="flex justify-center mb-3">
-          <Avatar
-            changeAble
-            size="xl"
-            name={"Mujay"}
-            src={
-              srcPic ||
-              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
-            }
-            onChange={changeProfilePic}
-          />
-        </div>
-        <div className="flex gap-3">
-          <InputText
-            name="name"
-            value={formik.values.name}
-            placeholder="Nama Toko"
-            error={formik.errors.name && formik.touched.name}
-            errorMessage={formik.touched.name && formik.errors.name}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-          />
-          <InputText
-            name="noTlp"
-            value={formik.values.noTlp}
-            placeholder="Nomor Telepon"
-            error={formik.errors.noTlp && formik.touched.noTlp}
-            errorMessage={formik.touched.noTlp && formik.errors.noTlp}
-            onBlur={formik.handleBlur}
-            onChange={formik.handleChange}
-          />
-        </div>
-        <Textarea
-          placeholder="Alamat Toko"
-          name="address"
-          value={formik.values.address}
-          error={formik.errors.address && formik.touched.address}
-          errorMessage={formik.touched.address && formik.errors.address}
-          onBlur={formik.handleBlur}
-          onChange={formik.handleChange}
-        />
-        <div>
-          <div
-            className={`h-72 my-1 relative w-full rounded overflow-hidden border-[1px]  ${
-              formik.errors.latitude ? "border-red-400" : "border-gray-200"
-            }`}
-          >
-            <GoogleMap
-              clickableIcons
-              onClick={(e) => {
-                formik.setFieldValue("latitude", e.latLng.lat());
-                formik.setFieldValue("longitude", e.latLng.lng());
-              }}
-              center={geo}
-              zoom={12}
-              mapContainerStyle={{ width: "100%", height: "100%" }}
-              options={{
-                zoomControl: false,
-                streetViewControl: false,
-                mapTypeControl: false,
-              }}
-              onLoad={(map) => {
-                setMap(map);
-                formik.setFieldValue("latitude", store.latitude * 1);
-                formik.setFieldValue("longitude", store.longitude * 1);
-              }}
-            >
-              <MarkerF
-                position={{
-                  lat: formik.values.latitude * 1 || 0,
-                  lng: formik.values.longitude * 1 || 0,
-                }}
-              />
-            </GoogleMap>
-            <div
-              onClick={() => {
-                map.panTo(geo);
-              }}
-              className="absolute cursor-pointer bottom-2 right-2 bg-white rounded p-1"
-            >
-              <MapPinIcon className="w-5 h-5 text-red-500" />
-            </div>
-          </div>
-          <span className="text-sm italic text-red-500">
-            * klik map untuk memilih lokasi
-          </span>
-        </div>
-        <button
-          type="submit"
-          disabled={formik.isSubmitting}
-          className="bg-primary hover:bg-primary-focus transition-all py-2 text-white rounded"
+  if (isLoading) {
+    return (
+      <div className="flex justify-center mt-52" role="status">
+        <svg
+          aria-hidden="true"
+          className="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+          viewBox="0 0 100 101"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          {formik.isSubmitting ? "Loading" : "Ubah Toko"}
-        </button>
-      </form>
+          <path
+            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+            fill="currentColor"
+          />
+          <path
+            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+            fill="currentFill"
+          />
+        </svg>
+        <span className="sr-only">Loading...</span>
+      </div>
+    );
+  }
+  return (
+    <section>
+      <div className="border-b-[1px] px-10 py-3 flex flex-col items-center gap-2">
+        <Avatar name={store.name} src={store.profilePicture} size="lg" />
+        <div className="flex flex-col items-center">
+          <p className="font-medium text-xl">{store.name}</p>
+          <span>{store.address}</span>
+        </div>
+      </div>
+      <div className="py-2">
+        <div className="flex justify-between items-center px-5">
+          <p className="text-2xl font-medium text-center">Produk</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-5">
+          {store.Products.map((prod) => (
+            <div
+              onClick={() => router.push("/product/" + prod.id)}
+              key={prod.id}
+              className="border-[1px] rounded overflow-hidden"
+            >
+              <div className="cursor-pointer">
+                <img
+                  className="w-full h-52 object-cover object-center"
+                  src={prod.picture}
+                  alt="product"
+                />
+              </div>
+              <div className="p-2">
+                <p className="text-lg font-medium cursor-pointer">
+                  {prod.name}
+                </p>
+                <div className="flex justify-between items-center">
+                  <p className="text-2xl mt-2 font-bold text-primary">
+                    Rp. {prod.price}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {store.Products.length === 0 && (
+          <div className="flex justify-center py-5 font-medium">
+            Tidak Ada Produk
+          </div>
+        )}
+      </div>
     </section>
   );
 };
 
 export async function getServerSideProps(context) {
   try {
-    const { storeId } = context.query;
-    const store = await StoreAPI.getOne(storeId);
+    const session = await getSession(context);
     return {
-      props: { store },
+      props: { session },
     };
   } catch (error) {
     return {
@@ -218,4 +106,4 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default EditStore;
+export default StoreDetail;
