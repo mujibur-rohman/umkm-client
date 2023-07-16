@@ -25,6 +25,17 @@ const ProductAPI = {
       throw new Error(error.message);
     }
   },
+  getAll: async (url) => {
+    try {
+      const response = await axiosConfig.get(url);
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
+  },
   update: async ({ productId, formData }) => {
     try {
       const response = await axiosConfig.put(

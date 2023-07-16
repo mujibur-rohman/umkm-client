@@ -85,7 +85,7 @@ const Store = () => {
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 p-5">
-          {store.Products.map((prod) => (
+          {store?.Products?.map((prod) => (
             <div key={prod.id} className="border-[1px] rounded overflow-hidden">
               <div className="cursor-pointer">
                 <img

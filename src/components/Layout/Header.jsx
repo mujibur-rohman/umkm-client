@@ -1,10 +1,12 @@
 import {
+  ArchiveBoxIcon,
   ArrowLeftOnRectangleIcon,
   BuildingStorefrontIcon,
   ChevronDownIcon,
+  ShoppingBagIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
-import { Button, Menu, Text } from "@mantine/core";
+import { Menu } from "@mantine/core";
 import { getSession, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -13,7 +15,6 @@ import React from "react";
 const Header = () => {
   const session = useSession();
   const router = useRouter();
-  // console.log(session);
   return (
     <header className="sticky items-center px-5 justify-between bg-white z-10 border-b-[1px] top-0 h-12 flex">
       <Link href="/" className="font-medium text-primary cursor-pointer">
@@ -42,7 +43,7 @@ const Header = () => {
         {session.status === "authenticated" && (
           <Menu shadow="md" width={200}>
             <Menu.Target>
-              <button className="text-sm flex gap-1 items-center">
+              <button className="text-sm flex whitespace-nowrap gap-1 items-center">
                 {session.data.user.name}
                 <ChevronDownIcon className="w-4" />
               </button>
@@ -56,12 +57,26 @@ const Header = () => {
               >
                 Profil Saya
               </Menu.Item>
+              <Menu.Item
+                onClick={() => router.push("/transaction")}
+                icon={<ShoppingBagIcon className="w-4" />}
+              >
+                Pesanan Saya
+              </Menu.Item>
               {session.data.user.store && (
                 <Menu.Item
                   onClick={() => router.push("/store/")}
                   icon={<BuildingStorefrontIcon className="w-4" />}
                 >
                   Toko Saya
+                </Menu.Item>
+              )}
+              {session.data.user.store && (
+                <Menu.Item
+                  onClick={() => router.push("/transaction/store")}
+                  icon={<ArchiveBoxIcon className="w-4" />}
+                >
+                  Pesanan Toko
                 </Menu.Item>
               )}
               <Menu.Item

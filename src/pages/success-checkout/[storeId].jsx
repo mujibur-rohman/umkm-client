@@ -15,7 +15,10 @@ function SuccessCheckout() {
           Konfirmasi pembayaran melalui Whatsapp dan tekan tombol dibawah ini
         </h2>
         <div className="flex justify-center gap-3">
-          <button className="bg-warning text-white py-2 px-4 rounded-lg">
+          <button
+            onClick={() => router.push("/transaction")}
+            className="bg-warning text-white py-2 px-4 rounded-lg"
+          >
             Lihat Pesanan
           </button>
           <button className="bg-success text-white py-2 px-4 rounded-lg">

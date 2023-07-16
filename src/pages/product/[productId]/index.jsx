@@ -1,8 +1,11 @@
 import ProductAPI from "@/network/features/product.api";
+import { getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 function ProductDetail({ product }) {
   const router = useRouter();
+  const session = useSession();
+  console.log(session);
   return (
     <section className="py-5 w-[50vw] mx-auto flex gap-3">
       <div className="border-[1px] grow rounded-lg p-3 flex gap-3 self-start">
@@ -30,12 +33,21 @@ function ProductDetail({ product }) {
           <button className="text-sm bg-warning transition-colors hover:bg-warning-focus py-1 text-white rounded-md">
             Tambah Keranjang
           </button>
-          <button
-            onClick={() => router.push(`/checkout/${product.id}`)}
-            className="text-sm bg-primary transition-colors hover:bg-primary-focus py-1 text-white rounded-md"
-          >
-            Beli
-          </button>
+          {session?.data?.user ? (
+            <button
+              onClick={() => router.push(`/checkout/${product.id}`)}
+              className="text-sm bg-primary transition-colors hover:bg-primary-focus py-1 text-white rounded-md"
+            >
+              Beli
+            </button>
+          ) : (
+            <button
+              onClick={() => router.push(`/auth`)}
+              className="text-sm bg-primary transition-colors hover:bg-primary-focus py-1 text-white rounded-md"
+            >
+              Login
+            </button>
+          )}
         </div>
       </div>
     </section>
@@ -44,11 +56,13 @@ function ProductDetail({ product }) {
 
 export async function getServerSideProps(context) {
   try {
+    const session = await getSession(context);
     const { productId } = context.query;
     const product = await ProductAPI.getOne(productId);
     return {
       props: {
         product,
+        session,
       },
     };
   } catch (error) {
