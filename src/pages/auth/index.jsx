@@ -9,7 +9,6 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { Circles } from "react-loader-spinner";
 import baseColor from "@/utils/baseColor";
-import AuthService from "@/network/features/auth.api";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
