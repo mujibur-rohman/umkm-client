@@ -53,6 +53,17 @@ const StoreAPI = {
       throw new Error(error.message);
     }
   },
+  delete: async (storeId) => {
+    try {
+      const response = await axiosConfig.delete(`${storeEndPoint}/${storeId}`);
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
+  },
 };
 
 export default StoreAPI;

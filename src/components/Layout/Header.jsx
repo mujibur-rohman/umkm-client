@@ -4,9 +4,11 @@ import {
   BuildingStorefrontIcon,
   ChevronDownIcon,
   ShoppingBagIcon,
+  ShoppingCartIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
-import { Menu } from "@mantine/core";
+import { Drawer, Menu } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { getSession, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,14 +17,29 @@ import React from "react";
 const Header = () => {
   const session = useSession();
   const router = useRouter();
+  const [opened, { open, close }] = useDisclosure(false);
   return (
     <header className="sticky items-center px-5 justify-between bg-white z-10 border-b-[1px] top-0 h-12 flex">
+      <Drawer opened={opened} onClose={close} title="Cart">
+        Test
+      </Drawer>
+
       <Link href="/" className="font-medium text-primary cursor-pointer">
         UMKM Niaga
       </Link>
 
       {/* Jika login */}
       <div className="flex gap-3">
+        <button
+          onClick={open}
+          className="text-sm flex whitespace-nowrap relative gap-1 items-center"
+        >
+          <div className="rounded-full absolute px-1 -top-1 -left-1 bg-primary text-xs text-white">
+            1
+          </div>
+          <ShoppingCartIcon className="w-5 text-black" />
+        </button>
+
         {/* Jika belum login */}
         {session.status === "unauthenticated" && (
           <button

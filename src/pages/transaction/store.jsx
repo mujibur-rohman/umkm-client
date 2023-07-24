@@ -13,7 +13,9 @@ function TransactionStore() {
     data: transaction,
     isLoading,
     mutate,
-  } = useSWR(session.data.user.store, (url) => TransactionAPI.getByStore(url));
+  } = useSWR(session?.data?.user?.store, (url) =>
+    TransactionAPI.getByStore(url)
+  );
 
   const [delivery, setDelivery] = useState(1);
 

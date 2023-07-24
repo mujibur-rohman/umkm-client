@@ -5,18 +5,19 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { modals } from "@mantine/modals";
 import { getSession, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
 import useSWR from "swr";
 
 const Store = () => {
-  const session = useSession();
-
+  const { data: session, update } = useSession();
+  const router = useRouter();
   const {
     data: store,
     isLoading,
     mutate,
-  } = useSWR(`${session.data.user.store}`, (url) => StoreAPI.getOne(url));
+  } = useSWR(`${session.user.store}`, (url) => StoreAPI.getOne(url));
 
   const openModal = (id) =>
     modals.openConfirmModal({
@@ -28,6 +29,31 @@ const Store = () => {
           await ProductAPI.delete(id);
           mutate();
           toast.success("Produk Berhasil Dihapus");
+        } catch (error) {
+          console.log(error);
+        }
+      },
+      withCloseButton: false,
+      confirmProps: { type: "primary" },
+    });
+  const openModalStore = (id) =>
+    modals.openConfirmModal({
+      title: <p className="font-medium">Hapus Toko</p>,
+      children: <p>Apakah yakin ingin menghapus toko?</p>,
+      labels: { confirm: "Ya", cancel: "Batal" },
+      onConfirm: async () => {
+        try {
+          await StoreAPI.delete(id);
+          router.push("/");
+          await update({
+            ...session,
+            user: {
+              ...session?.user,
+              store: null,
+            },
+          });
+
+          toast.success("Toko Berhasil Dihapus");
         } catch (error) {
           console.log(error);
         }
@@ -62,16 +88,24 @@ const Store = () => {
   return (
     <section>
       <div className="border-b-[1px] px-10 py-3 flex flex-col items-center gap-2">
-        <Avatar name={store.name} src={store.profilePicture} size="lg" />
+        <Avatar name={store?.name} src={store?.profilePicture} size="lg" />
         <div className="flex flex-col items-center">
-          <p className="font-medium text-xl">{store.name}</p>
-          <span>{store.address}</span>
-          <Link
-            href={`/store/${store.id}/edit`}
-            className="bg-success px-2 py-1 rounded cursor-pointer text-white mt-3"
-          >
-            Edit Toko
-          </Link>
+          <p className="font-medium text-xl">{store?.name}</p>
+          <span>{store?.address}</span>
+          <div className="flex gap-3">
+            <Link
+              href={`/store/${store?.id}/edit`}
+              className="bg-success px-2 py-1 rounded cursor-pointer text-white mt-3"
+            >
+              Edit Toko
+            </Link>
+            <div
+              onClick={() => openModalStore(store?.id)}
+              className="bg-error px-2 py-1 flex items-center rounded cursor-pointer text-white mt-3"
+            >
+              <TrashIcon className="w-4 text-white" />
+            </div>
+          </div>
         </div>
       </div>
       <div className="py-2">
@@ -121,7 +155,7 @@ const Store = () => {
             </div>
           ))}
         </div>
-        {store.Products.length === 0 && (
+        {store?.Products?.length === 0 && (
           <div className="flex justify-center py-5 font-medium">
             Tidak Ada Produk
           </div>
