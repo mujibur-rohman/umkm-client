@@ -7,10 +7,12 @@ import { getSession, useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import AuthService from "@/network/features/auth.api";
 import acceptedImages, { sizeImage } from "@/utils/acceptedImages";
+import Auth from "@/network/features/auth.api";
 
 function Profile() {
   const [disableName, setDisableName] = useState(true);
   const [srcPic, setSrcPic] = useState("");
+  const [pass, setPass] = useState({ oldPassword: "", newPassword: "" });
   const { data: session, update } = useSession();
 
   // handler image
@@ -54,6 +56,7 @@ function Profile() {
       toast.error(error.message);
     }
   };
+  console.log(pass);
   return (
     <section>
       <header className="bg-gradient-to-r grow from-blue-500 via-purple-500 to-pink-500 flex justify-center">
@@ -111,17 +114,45 @@ function Profile() {
             <div className="w-full">
               <label>Password Lama</label>
               <div className="flex gap-2">
-                <InputPassword placeholder="Password Lama" />
+                <InputPassword
+                  value={pass.oldPassword}
+                  onChange={(e) =>
+                    setPass({ ...pass, oldPassword: e.target.value })
+                  }
+                  placeholder="Password Lama"
+                />
               </div>
             </div>
             <div className="w-full">
               <label>Password Baru</label>
               <div className="flex gap-2">
-                <InputPassword placeholder="Password Baru" />
+                <InputPassword
+                  value={pass.newPassword}
+                  onChange={(e) =>
+                    setPass({ ...pass, newPassword: e.target.value })
+                  }
+                  placeholder="Password Baru"
+                />
               </div>
             </div>
           </div>
-          <button className="bg-primary mt-2 rounded hover:bg-primary-focus transition-all text-white px-2 py-1">
+          <button
+            disabled={!pass.newPassword || !pass.oldPassword}
+            onClick={async () => {
+              try {
+                await Auth.updatePassword({
+                  uuid: session.user.uuid,
+                  newPassword: pass.newPassword,
+                  oldPassword: pass.oldPassword,
+                });
+                toast.success("Password berhasil diganti");
+                setPass({ newPassword: "", oldPassword: "" });
+              } catch (error) {
+                toast.error(error.message);
+              }
+            }}
+            className="bg-primary disabled:bg-primary/50 disabled:cursor-not-allowed mt-2 rounded hover:bg-primary-focus transition-all text-white px-2 py-1"
+          >
             Ganti Password
           </button>
         </section>

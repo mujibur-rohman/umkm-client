@@ -58,6 +58,20 @@ const Auth = {
       throw new Error(error.message);
     }
   },
+  updatePassword: async ({ uuid, oldPassword, newPassword }) => {
+    try {
+      const response = await axiosConfig.put(
+        `${authEndPoint}/change-password/${uuid}`,
+        { oldPassword, newPassword }
+      );
+      return response.data;
+    } catch (error) {
+      if (error.response.data.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error(error.message);
+    }
+  },
 };
 
 export default Auth;
