@@ -100,10 +100,7 @@ function Profile() {
               <div className="w-full">
                 <label>Email</label>
                 <div className="flex gap-2">
-                  <InputText value="muji@gmail.com" disabled />
-                  <button className="bg-primary rounded hover:bg-primary-focus transition-all text-white px-2 py-1">
-                    Verifikasi
-                  </button>
+                  <InputText value={session.user.email} disabled />
                 </div>
               </div>
             </div>

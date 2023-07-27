@@ -1,3 +1,4 @@
+import useCart from "@/hooks/useCart";
 import ProductAPI from "@/network/features/product.api";
 import { getSession, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -7,13 +8,13 @@ function ProductDetail({ product }) {
   const router = useRouter();
   const session = useSession();
   const [cart, setCart] = useState();
-  console.log(cart);
+  const { cart: cartState, setCart: setCartState } = useCart();
 
   useEffect(() => {
     const carts = JSON.parse(localStorage.getItem("cart"));
     const mapCart = carts?.map((item) => item.id);
     setCart(mapCart);
-    console.log(mapCart?.find((e) => e === 15));
+    setCartState(carts);
   }, []);
 
   return (
@@ -50,6 +51,7 @@ function ProductDetail({ product }) {
                 const mapCart = filterCart?.map((item) => item.id);
                 setCart(mapCart);
                 localStorage.setItem("cart", JSON.stringify(filterCart));
+                setCartState(filterCart);
               }}
               className="text-sm bg-error transition-colors hover:bg-warning-focus py-1 text-white rounded-md"
             >
